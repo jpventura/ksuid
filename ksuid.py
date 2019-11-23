@@ -2,8 +2,11 @@
 
 from collections import namedtuple
 from datetime import datetime
-from functools import reduce
 from string import hexdigits
+from typing import NamedTuple
+
+import json
+import uuid
 
 BASE_62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 BASE_OF = len(BASE_62)
@@ -13,27 +16,13 @@ TABLE_ENCODE = str.maketrans(dict(zip(
   BASE_62
 )))
 
-# TABLE_DECODE = str.maketrans(dict(zip(
-#   BASE_62,
-#   map(str, range(len(BASE_62)))
-# )))
-
 TABLE_DECODE = dict(zip(
   BASE_62,
   range(len(BASE_62))
 ))
 
-# TABLE_ENCODE = str.maketrans(dict(zip(map(str, range(len(BASE_62))), BASE_62)))
-
-# TABLE_ENCODE = str.maketrans(dict(zip(
-#   BASE_62,
-#   range(len(BASE_62))
-# )))
-
-
-
-
-EPOCH_SHIFT = 14e8
+KSUID_EPOCH_ISO8601 = '2014-05-13T16:53:20.000Z'
+KSUID_EPOCH_TIMESTAMP = 14e8
 KSUID_PAYLOAD = 0x00000000ffffffffffffffffffffffffffffffff
 
 
@@ -51,8 +40,6 @@ BITS_PER_BYTE =  8
 BYTES_PAYLOAD = 16
 BYTES_KSUID = 20
 BYTES_TIMESTAMP =  4
-
-# KSUID_MAX = 0xffffffffffffffffffffffffffffffffffffffff
 
 KSUID_MIN = 0x0
 KSUID_MAX = 2**160 - 1
@@ -111,12 +98,22 @@ def timestamp(id):
     return timestamp(decode(id))
 
   if (type(id) == int) and (KSUID_MIN <= id <= KSUID_MAX):
-    return int((id >> 128) + EPOCH_SHIFT)
+    return int((id >> 128) + KSUID_EPOCH_TIMESTAMP)
 
   msg = 'expected id of type int or str, not %s' % type(id).__name__
   raise TypeError(msg)
 
-KSUID = namedtuple('KSUID', ['iso_datetime', 'payload', 'timestamp'])
+class KSUID(NamedTuple):
+  """K-Sorted ID"""
+  created_at : str = KSUID_EPOCH_ISO8601
+  payload    : int = 0
+  timestamp  : int = 0
+
+  def __str__(self):
+    return json.dumps({
+      '_id': str(uuid.UUID(self.payload)),
+      'created_at': self.created_at
+    }, indent=4, sort_keys=True)
 
 def inspect(id):
   if (type(id) == str) and set(hexdigits).issuperset(id):
@@ -132,16 +129,8 @@ def inspect(id):
   raise TypeError(msg)
 
 def main():
-  print(inspect(ID))
-
-  # print(hex(int(RAW, base=16)))
-  
-
-  
-  # timestamp = hex(decode(KSUID))[2:]
-  # print(zulu_time(107610780))
-  # assert hex(decode(KSUID)) == hex(int(RAW, base=16))
-
+  # print(inspect(ID))
+  print(payload(ID))
 
 if __name__ == '__main__':
   main()
