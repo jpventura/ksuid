@@ -9,16 +9,16 @@ import json
 import uuid
 
 BASE_62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-BASE_OF = len(BASE_62)
+BASE_OF = 62
 
 TABLE_ENCODE = str.maketrans(dict(zip(
-  range(len(BASE_62)),
+  range(BASE_OF),
   BASE_62
 )))
 
 TABLE_DECODE = dict(zip(
   BASE_62,
-  range(len(BASE_62))
+  range(BASE_OF)
 ))
 
 KSUID_EPOCH_ISO8601 = '2014-05-13T16:53:20.000Z'
@@ -46,7 +46,6 @@ KSUID_MAX = 2**160 - 1
 MAX_KSUID_ENCODED = 'aWgEPTl1tmebfsQzFP4bxwgy80V'
 
 MAX_KSUID_ENCODED_LENGTH = len(MAX_KSUID_ENCODED)
-
 
 def _ksuid_check(ksuid):
   if type(ksuid) != str:
