@@ -18,6 +18,11 @@ TABLE_ENCODE = str.maketrans(dict(zip(
   BASE_62
 )))
 
+TABLE_ENCODE_2 = dict(zip(
+  range(BASE_OF),
+  BASE_62
+))
+
 TABLE_DECODE = dict(zip(
   BASE_62,
   range(BASE_OF)
@@ -154,6 +159,23 @@ def _ksuid_check(ksuid):
 
   return ksuid
 
+def encode(raw=None, timestamp=datetime.now().timestamp(), payload=0):
+  if raw == None:
+    raw = ((timestamp - 14e8) << 128) + payload
+    return encode(raw)
+
+  remainder = raw
+  digits = []
+
+  return ''
+  while (remainder >= BASE_62):
+    quotient = remainder/BASE_62
+    remainder = remainder%BASE_62
+    digits.append(TABLE_ENCODE_2[quotient])
+
+  digits.append(remainder)
+  return ''.join(map(str, digits))
+
 def decode(ksuid):
   formatted_ksuid = _ksuid_check(ksuid)
 
@@ -177,6 +199,11 @@ def payload(id):
     return payload(decode(id))
 
   if (type(id) == int) and (KSUID_MIN <= id <= KSUID_MAX):
+    print('orra')
+    print('orra')
+    print(hex(id))
+    print('orra')
+    print('orra')
     return format(id & KSUID_PAYLOAD, 'x')
 
   msg = 'expected id of type int or str, not %s' % type(id).__name__
@@ -229,8 +256,16 @@ def inspect(id):
   raise TypeError(msg)
 
 def main():
-  print(inspect('0oqjvob6nFFOVLKFnJj8Ec6kVnx'))
-  print(timestamp('0oqjvob6nFFOVLKFnJj8Ec6kVnx'))
+  payload = 0x573e010013647a49b8f6b3e35e8b3c45
+  skuid = '0oqjvob6nFFOVLKFnJj8Ec6kVnx'
+  t1mestamp = 1496427462
+  x = 96427462000
+  raw = int(t1mestamp - 14e8) | payload
+  raw_ = int(t1mestamp) | payload
+  print(hex(int(t1mestamp) | payload))
+  
+  print(inspect(skuid))
+  print(hex(timestamp(skuid)))
   print(format(timestamp(ID), 'x'))
   
 
