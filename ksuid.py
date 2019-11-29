@@ -37,6 +37,9 @@ TABLE_DECODE = dict(zip(
 # https://en.wikipedia.org/wiki/Base64
 #     ler sobre padding
 
+# how-do-i-generate-a-unique-id-using-uuid-which-starts-with-an-alphabet
+# https://stackoverflow.com/questions/19578833/
+
 scheme = {
   'base58': {
     'bitcoin': '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
